@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GitHub User Profile and Repositories</title>
+        <style>
+            *{
+                font-weight:bold;
+            }
+            #repoList {
+                margin-top: 20px;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .repo {
+                border: 3px solid #333;
+                padding: 10px;
+            }
+            .paginationBtn {
+                padding: 10px 15px;
+                color: #428bca;
+                font-size: 20px;
+            }
+            #profile_image {
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                background-size: cover;
+                background-position: center;
+            }
+            #profile {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin:20px;
+            }
+            .Loyout_wrapper{
+                margin: 40px;
+            }
+            .repo_name{
+                text-decoration: none;
+                color: #428bca;
+            }
+            .profile_link_wrapper{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin-top: 10px;
+            }
+            #numberedPages{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+            .pagination_number_wrapper{
+                display: flex;
+            }
+            .pagination_button{
+                border-radius: 50px;
+                padding: 10px 15px;
+                border-width: 1px;
+            }
+            .pagination{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .tag_color{
+                padding: 6px;
+                margin-left:5px;
+                margin-right:5px;
+                border-radius: 4px;
+                color: white;
+                background-color: #428bca;
+                margin-bottom: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="Loyout_wrapper">
+            <div id="profile">
+                <div>
+                    <div id="profile_image" style="background-image: url('https://th.bing.com/th/id/OIP.swaYMWAS8cfbyMKLEiQJ2QD6D6?rs=1&pid=ImgDetMain');"></div>
+                    <div class="profile_link_wrapper">
+                        <image src="../images/link.svg" style="height: 20px"></image>
+                        <div id="profile_link"></div>
+                    </div>
+                </div>
+                <div style="margin-left: 80px">
+                    <h2 id="name"></h2>
+                    <p id="bio"></p>
+                    <p id="location"></p>
+                    <a id="twitter" href=""></a>
+                    <a id="github" href=""></a>
+                </div>
+            </div>
+            <div>
+                <input type="text" id="username" placeholder="Enter GitHub username"/>
+                <button onclick="fetchRepos(1)">Fetch Repos</button>
+                <div id="repoList"></div>
+                <div class="pagination" style="margin-top:50px;">
+                    <div class="pagination_number_wrapper">
+                    <button onclick="fetchRepos(currentPage - 1)" id="prevBtn2" style="color: #428bca;" disabled><<</button>
+                    <div id="numberedPages"></div>
+                    <button onclick="fetchRepos(currentPage + 1)" id="nextBtn2" style="color: #428bca;" disabled>>></button>
+                    </div>
+                </div>
+                <div class="pagination" style="margin-top:50px">
+                    <button onclick="fetchRepos(currentPage - 1)" id="prevBtn" class="pagination_button" style="margin-right: 240px" disabled><- Previous</button>
+                    <button onclick="fetchRepos(currentPage + 1)" id="nextBtn" class="pagination_button" disabled>Next -></button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const local = 'http://localhost:5000';
+            const deployed = 'https://fyle-web-development-internship-backend.vercel.app/';
+            let currentPage = 1;
+            let totalPages = 1;
+
+            const pre_url = local;
+            async function fetchRepos(page) {
+                const username = document.getElementById('username').value;
+                const response = await fetch(`${pre_url}/user/${username}?page=${page}`);
+                document.getElementById('profile_link').innerHTML = `<a href="https://github.com/${username}">https://github.com/${username}</link>`;
+                const repos = await response.json();
+                console.log(repos,"repos");
+                const repoList = document.getElementById('repoList');
+                repoList.innerHTML = ''; // Clear the list
+
+                for (const repo of repos) {
+                    const repoDiv = document.createElement('div');
+                    repoDiv.className = 'repo';
+                    repoDiv.innerHTML = `
+                            <h1><a href="${repo.url}" target="_blank" class="repo_name">${repo.name}</a></h1>
+                            <p>${repo.description}</p>
+                            ${repo.topics.length > 0
+                                                ? repo.topics.map(topic => `<span class="tag_color">${topic}</span>`).join(' ')
+                                                : ''}
+                        `;
+                    repoList.appendChild(repoDiv);
+                }
+
+                currentPage = page;
+
+                document.getElementById('prevBtn').disabled = currentPage === 1;
+                document.getElementById('prevBtn2').disabled = currentPage === 1;
+                document.getElementById('nextBtn').disabled = repos.length === 0;
+                document.getElementById('nextBtn2').disabled = repos.length === 0;
+
+                await fetchUserProfile(username);
+                totalPages = calculateTotalPages(repos.length);
+                updateNumberedPages(currentPage);
+            }
+            async function fetchUserProfile(username) {
+                fetch(`${pre_url}/user/${username}/profile`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('profile_image').style.backgroundImage = `url(${data.avatar_url})`;
+                        document.getElementById('name').textContent = data.name;
+                        document.getElementById('bio').textContent = data.bio;
+                        document.getElementById('location').textContent = data.location;
+                        document.getElementById('twitter').href = `https://twitter.com/${data.twitter_username}`;
+                        document.getElementById('github').href = data.html_url;
+                    })
+                    .catch(error => console.error('An error occurred:', error));
+            }
+
+            function calculateTotalPages(totalRepos) {
+                const reposPerPage = 8; // Change this value based on your preference
+                return Math.ceil(totalRepos / reposPerPage);
+            }
+
+            function updateNumberedPages(currentPage) {
+                const numberedPages = document.getElementById('numberedPages');
+                numberedPages.innerHTML = '';
+
+                for (let i = 1; i <= 8; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = 'paginationBtn';
+                    pageBtn.innerText = i;
+                    pageBtn.onclick = () => fetchRepos(i);
+                    numberedPages.appendChild(pageBtn);
+
+                    if (i === currentPage) {
+                        pageBtn.setAttribute('disabled', true);
+                        pageBtn.classList.add('active');
+                        pageBtn.style.backgroundColor = '#428bca';
+                        pageBtn.style.color = 'white';
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
