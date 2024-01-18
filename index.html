@@ -117,7 +117,7 @@
             let currentPage = 1;
             let totalPages = 1;
 
-            const pre_url = local;
+            const pre_url = deployed;
             async function fetchRepos(page) {
                 const username = document.getElementById('username').value;
                 const response = await fetch(`${pre_url}/user/${username}?page=${page}`);
