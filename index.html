@@ -113,14 +113,24 @@
         </div>
         <script>
             const local = 'http://localhost:5000';
-            const deployed = 'https://fyle-web-development-internship-backend.vercel.app/';
+            const deployed = 'https://fyle-web-development-internship-backend.vercel.app';
             let currentPage = 1;
             let totalPages = 1;
 
             const pre_url = deployed;
             async function fetchRepos(page) {
+                const init = await fetch(`${pre_url}/`);
+                console.log(init,"init");
+
                 const username = document.getElementById('username').value;
-                const response = await fetch(`${pre_url}/user/${username}?page=${page}`);
+                const response = await fetch(`${pre_url}/user/${username}?page=${page}`,{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors',
+                    credentials: 'include'
+                });
                 document.getElementById('profile_link').innerHTML = `<a href="https://github.com/${username}">https://github.com/${username}</link>`;
                 const repos = await response.json();
                 console.log(repos,"repos");
