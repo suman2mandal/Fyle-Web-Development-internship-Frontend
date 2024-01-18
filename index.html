@@ -123,14 +123,7 @@
                 console.log(init,"init");
 
                 const username = document.getElementById('username').value;
-                const response = await fetch(`${pre_url}/user/${username}?page=${page}`,{
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    mode: 'cors',
-                    credentials: 'include'
-                });
+                const response = await fetch(`${pre_url}/user/${username}?page=${page}`);
                 document.getElementById('profile_link').innerHTML = `<a href="https://github.com/${username}">https://github.com/${username}</link>`;
                 const repos = await response.json();
                 console.log(repos,"repos");
