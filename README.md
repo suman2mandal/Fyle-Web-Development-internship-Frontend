@@ -4,7 +4,7 @@
 
 This project is part of the Fyle Web Development Internship. It consists of a frontend and a backend, both of which are deployed on Vercel.
 
-## Backend
+## Backend GitHub URL: https://github.com/suman2mandal/Fyle-Web-Development-internship-Backend
 
 The backend is built using Node.js and is responsible for fetching data from GitHub using the REST API. The tokens for the API are working fine, ensuring secure and authorized data transactions.
 
