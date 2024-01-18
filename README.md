@@ -32,3 +32,6 @@ The frontend is deployed at: https://fyle-web-development-internship-frontend.ve
 - **Vanilla JavaScript**: Used for building the frontend application.
 - **Nodemon**: Used in the backend for automatically restarting the server as file changes are detected.
 - **Lite-server**: Used in the frontend for serving the application during local development.
+
+## Demo Video
+[Click here to watch the video](https://drive.google.com/file/d/19xE7XDJ6STNed6Jk77XuO4-lZU5lFnIX/view?usp=drive_link)
