@@ -11,7 +11,8 @@ The backend is built using Node.js and is responsible for fetching data from Git
 To run the backend locally, follow these steps:
 
 1. Install the project dependencies with `npm i`.
-2. Start the server with `npm run start`.
+2. Change the const pre_url = deployed; to const pre_url = local;
+3. Start the server with `npm run start`.
 
 The backend is deployed at: https://fyle-web-development-internship-backend.vercel.app/
 
